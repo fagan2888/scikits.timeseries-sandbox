@@ -26,6 +26,9 @@ from scikits.timeseries import \
     TimeSeries, date_array, time_series, \
     TimeSeriesRecords, fromrecords, fromarrays, time_records, tsfromtxt
 
+def assert_np_array_equal(a, b):
+    assert np.array_equal(a, b)
+
 #..............................................................................
 class TestTimeSeriesRecords(TestCase):
     "Base test class for MaskedArrays."
@@ -52,7 +55,7 @@ class TestTimeSeriesRecords(TestCase):
         [d, m, mrec, dlist, dates, mts, rts] = self.data
         self.failUnless(isinstance(rts['f0'], TimeSeries))
         self.failUnless(not isinstance(rts['f0'], TimeSeriesRecords))
-        assert_equal(rts['f0']._dates, dates)
+        assert_np_array_equal(rts['f0']._dates, dates)
         assert_equal(rts['f0']._data, d)
         assert_equal(rts['f0']._mask, m)
 
@@ -100,7 +103,7 @@ class TestTimeSeriesRecords(TestCase):
         self.failUnless(isinstance(rts[:2], TimeSeriesRecords))
         assert_equal(rts[:2]._data.f0, mrec[:2].f0)
         assert_equal(rts[:2]._data.f1, mrec[:2].f1)
-        assert_equal(rts[:2]._dates, dates[:2])
+        assert_np_array_equal(rts[:2]._dates, dates[:2])
 
 
     def test_set(self):
@@ -132,6 +135,7 @@ class TestTimeSeriesRecords(TestCase):
         [d, m, mrec, dlist, dates, mts, rts] = self.data
         #
         try:
+            foo
             rts[:2] = 5
         except TypeError:
             pass
@@ -220,7 +224,7 @@ class TestTimeSeriesRecords(TestCase):
         #
         dlist = ['2007-%02i' % i for i in (1, 2, 3, 5)]
         self.failUnless(isinstance(mrectxt, TimeSeriesRecords))
-        assert_equal(mrectxt._dates, date_array(dlist, 'M'))
+        assert_np_array_equal(mrectxt._dates, date_array(dlist, 'M'))
         assert_equal(mrectxt.dtype.names, ['A', 'B', 'C', 'D', 'E', 'F'])
         assert_equal(mrectxt.F, [1, 1, 1, 1])
         assert_equal(mrectxt.E._mask, [1, 1, 1, 1])
@@ -234,23 +238,23 @@ class TestTimeSeriesRecords(TestCase):
         controldates.sort_chronologically()
         series = time_series(zip(*(a, b)), dates, freq='D', dtype=ndtype)
         assert_equal(series._data.tolist(), [(1., 10), (2., 20), (3., 30)])
-        assert_equal(series._dates, controldates)
+        assert_np_array_equal(series._dates, controldates)
         #
         trec = time_records(zip(*(a, b)), dates, freq='D', dtype=ndtype)
         assert_equal(trec._data.tolist(), [(1., 10), (2., 20), (3., 30)])
-        assert_equal(trec._dates, controldates)
+        assert_np_array_equal(trec._dates, controldates)
         assert_equal(trec['a'], [1., 2., 3.])
         assert_equal(trec.a, [1., 2., 3.])
         #
         trec = fromrecords(zip(a, b), dates, names=('a', 'b'))
         assert_equal(trec._data.tolist(), [(1., 10), (2., 20), (3., 30)])
-        assert_equal(trec._dates, controldates)
+        assert_np_array_equal(trec._dates, controldates)
         assert_equal(trec['a'], [1., 2., 3.])
         assert_equal(trec.a, [1., 2., 3.])
         #
         trec = fromarrays([a, b], dates, names=('a', 'b'))
         assert_equal(trec._data.tolist(), [(1., 10), (2., 20), (3., 30)])
-        assert_equal(trec._dates, controldates)
+        assert_np_array_equal(trec._dates, controldates)
         assert_equal(trec['a'], [1., 2., 3.])
         assert_equal(trec.a, [1., 2., 3.])
 
